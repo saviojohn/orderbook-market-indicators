@@ -1,11 +1,10 @@
-// app/context/TradingPairContext.tsx
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState, useContext } from 'react';
 
 const TradingPairContext = createContext<{
   pair: string;
-  setPair: (pair: string) => void;
+  setPair: (p: string) => void;
 }>({
   pair: 'btcusdt',
   setPair: () => {},
@@ -13,6 +12,7 @@ const TradingPairContext = createContext<{
 
 export const TradingPairProvider = ({ children }: { children: React.ReactNode }) => {
   const [pair, setPair] = useState('btcusdt');
+
   return (
     <TradingPairContext.Provider value={{ pair, setPair }}>
       {children}

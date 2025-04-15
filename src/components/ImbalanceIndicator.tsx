@@ -1,44 +1,62 @@
-// app/components/ImbalanceIndicator.tsx
-'use client';
+"use client";
 
-import { useBinanceDepth } from '@/lib/useBinanceDepth';
-import { Box, LinearProgress, Typography } from '@mui/material';
-import { useMemo } from 'react';
-
-function calcTotalVolume(orders: [string, string][]) {
-  return orders.reduce((sum, [_, qty]) => sum + parseFloat(qty), 0);
-}
+import { Box, Typography, LinearProgress } from "@mui/material";
+import { useBinanceDepth } from "@/lib/useBinanceDepth";
+import { useMemo } from "react";
 
 export default function ImbalanceIndicator() {
   const { bids, asks } = useBinanceDepth();
 
   const imbalance = useMemo(() => {
-    const bidVolume = calcTotalVolume(bids);
-    const askVolume = calcTotalVolume(asks);
-    const ratio = bidVolume + askVolume === 0 ? 0.5 : bidVolume / (bidVolume + askVolume);
-    return Math.round(ratio * 100); // as a percentage
+    if (!bids.length || !asks.length) return null;
+
+    const totalBid = bids.reduce(
+      (acc, [price, qty]) => acc + parseFloat(qty),
+      0
+    );
+    const totalAsk = asks.reduce(
+      (acc, [price, qty]) => acc + parseFloat(qty),
+      0
+    );
+    const ratio = totalBid / (totalBid + totalAsk);
+
+    return {
+      ratio: ratio * 100,
+      bid: totalBid,
+      ask: totalAsk,
+    };
   }, [bids, asks]);
 
+  if (!imbalance) return null;
+
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ my: 4 }}>
       <Typography variant="h6" gutterBottom>
         Orderbook Imbalance
       </Typography>
-      <Typography variant="body2" gutterBottom>
-        {imbalance}% Buy-side Dominance
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+        <Typography color="success.main">
+          Bids: {imbalance.bid.toFixed(2)}
+        </Typography>
+        <Typography color="error.main">
+          Asks: {imbalance.ask.toFixed(2)}
+        </Typography>
+      </Box>
       <LinearProgress
         variant="determinate"
-        value={imbalance}
+        value={imbalance.ratio}
         sx={{
-          height: 10,
-          borderRadius: 5,
-          backgroundColor: '#ffcdd2',
-          '& .MuiLinearProgress-bar': {
-            backgroundColor: '#4caf50',
+          height: 20,
+          borderRadius: 2,
+          "& .MuiLinearProgress-bar": {
+            backgroundColor: "#4caf50",
           },
         }}
       />
+      <Typography variant="body2" align="center" mt={1}>
+        {imbalance.ratio.toFixed(1)}% Buy Side /{" "}
+        {(100 - imbalance.ratio).toFixed(1)}% Sell Side
+      </Typography>
     </Box>
   );
 }

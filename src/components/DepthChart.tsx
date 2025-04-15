@@ -1,56 +1,85 @@
-// app/components/DepthChart.tsx
-'use client';
+"use client";
 
-import { useBinanceDepth } from '@/lib/useBinanceDepth';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+  CartesianGrid,
+} from "recharts";
+import { Box, Typography } from "@mui/material";
+import { useBinanceDepth } from "@/lib/useBinanceDepth";
+import { useMemo } from "react";
+
+type DepthData = {
+  price: number;
+  bidVolume?: number;
+  askVolume?: number;
+};
 
 export default function DepthChart() {
   const { bids, asks } = useBinanceDepth();
 
-  const data = useMemo(() => {
-    const cumulative = { bids: [], asks: [] as any[] };
+  const depthData = useMemo(() => {
+    const data: DepthData[] = [];
 
-    let cumBidVol = 0;
-    for (let i = bids.length - 1; i >= 0; i--) {
-      cumBidVol += parseFloat(bids[i][1]);
-      cumulative.bids.unshift({
-        price: parseFloat(bids[i][0]),
-        volume: cumBidVol,
-        type: 'Bid',
-      });
+    let cumBid = 0;
+    let cumAsk = 0;
+
+    const bidPoints = bids
+      .map(([price, qty]) => [parseFloat(price), parseFloat(qty)])
+      .sort((a, b) => b[0] - a[0]); // high to low
+
+    const askPoints = asks
+      .map(([price, qty]) => [parseFloat(price), parseFloat(qty)])
+      .sort((a, b) => a[0] - b[0]); // low to high
+
+    for (const [price, qty] of bidPoints) {
+      cumBid += qty;
+      data.unshift({ price, bidVolume: cumBid }); // insert from bottom
     }
 
-    let cumAskVol = 0;
-    for (let i = 0; i < asks.length; i++) {
-      cumAskVol += parseFloat(asks[i][1]);
-      cumulative.asks.push({
-        price: parseFloat(asks[i][0]),
-        volume: cumAskVol,
-        type: 'Ask',
-      });
+    for (const [price, qty] of askPoints) {
+      cumAsk += qty;
+      data.push({ price, askVolume: cumAsk });
     }
 
-    return [...cumulative.bids, ...cumulative.asks];
+    return data;
   }, [bids, asks]);
 
+  if (!depthData.length) return null;
+
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ my: 4 }}>
       <Typography variant="h6" gutterBottom>
-        Market Depth (Snapshot)
+        Market Depth
       </Typography>
-      <div style={{ height: 300 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data}>
-            <XAxis dataKey="price" type="number" domain={['dataMin', 'dataMax']} />
-            <YAxis dataKey="volume" />
-            <Tooltip />
-            <Area type="monotone" dataKey="volume" data={data.filter(d => d.type === 'Bid')} stroke="#00c853" fill="#00c853" />
-            <Area type="monotone" dataKey="volume" data={data.filter(d => d.type === 'Ask')} stroke="#d50000" fill="#d50000" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={depthData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="price" type="number" domain={["auto", "auto"]} />
+          <YAxis domain={["auto", "auto"]} />
+          <Tooltip />
+          <Area
+            type="stepAfter"
+            dataKey="bidVolume"
+            stroke="#4caf50"
+            fill="#4caf50"
+            fillOpacity={0.3}
+          />
+          <Area
+            type="stepAfter"
+            dataKey="askVolume"
+            stroke="#f44336"
+            fill="#f44336"
+            fillOpacity={0.3}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </Box>
   );
 }

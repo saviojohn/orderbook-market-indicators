@@ -1,31 +1,27 @@
-// app/components/PairSelector.tsx
-'use client';
+"use client";
 
-import { useTradingPair } from '@/app/context/TradingPairContext';
-import { FormControl, InputLabel, MenuItem, Select, Box } from '@mui/material';
+import { Tabs, Tab, Box } from "@mui/material";
+import { useTradingPair } from "@/app/context/TradingPairContext";
 
-const pairs = ['btcusdt', 'ethusdt', 'xrpusdt'];
+const tradingPairs = ["btcusdt", "ethusdt", "xrpusdt"];
 
 export default function PairSelector() {
   const { pair, setPair } = useTradingPair();
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <FormControl fullWidth>
-        <InputLabel id="pair-select-label">Trading Pair</InputLabel>
-        <Select
-          labelId="pair-select-label"
-          value={pair}
-          label="Trading Pair"
-          onChange={(e) => setPair(e.target.value)}
-        >
-          {pairs.map((p) => (
-            <MenuItem key={p} value={p}>
-              {p.toUpperCase()}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Box sx={{ my: 2 }}>
+      <Tabs
+        value={pair}
+        onChange={(_, newValue) => setPair(newValue)}
+        textColor="primary"
+        indicatorColor="primary"
+        variant="scrollable"
+        scrollButtons="auto"
+      >
+        {tradingPairs.map((symbol) => (
+          <Tab key={symbol} label={symbol.toUpperCase()} value={symbol} />
+        ))}
+      </Tabs>
     </Box>
   );
 }
