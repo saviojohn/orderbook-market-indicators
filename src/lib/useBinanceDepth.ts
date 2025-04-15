@@ -20,9 +20,9 @@ export const useBinanceDepth = () => {
       wsRef.current.close();
     }
 
-    const ws = new WebSocket(
-      `wss://stream.binance.com:9443/ws/${pair}@depth10@100ms`
-    );
+    const baseURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+    const url = `${baseURL}/${pair.toLowerCase()}@depth10@100ms`;
+    const ws = new WebSocket(url);
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -63,14 +63,14 @@ export const useBinanceDepth = () => {
     ws.onclose = (event) => {
       if (event.wasClean) {
         showSnackbar({
-          message: 'WebSocket connection closed cleanly',
-          severity: 'info',
+          message: "WebSocket connection closed cleanly",
+          severity: "info",
         });
       } else {
         showSnackbar({
-          message: 'WebSocket disconnected unexpectedly. Retry?',
-          severity: 'error',
-          actionLabel: 'Retry',
+          message: "WebSocket disconnected unexpectedly. Retry?",
+          severity: "error",
+          actionLabel: "Retry",
           onAction: () => window.location.reload(),
         });
       }
