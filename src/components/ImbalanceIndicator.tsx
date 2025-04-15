@@ -11,11 +11,11 @@ export default function ImbalanceIndicator() {
     if (!bids.length || !asks.length) return null;
 
     const totalBid = bids.reduce(
-      (acc, [price, qty]) => acc + parseFloat(qty),
+      (acc, [ qty]) => acc + parseFloat(qty),
       0
     );
     const totalAsk = asks.reduce(
-      (acc, [price, qty]) => acc + parseFloat(qty),
+      (acc, [ qty]) => acc + parseFloat(qty),
       0
     );
     const ratio = totalBid / (totalBid + totalAsk);

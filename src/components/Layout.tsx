@@ -2,9 +2,7 @@
 'use client';
 
 import { AppBar, Box, Container, CssBaseline, Toolbar, Typography } from '@mui/material';
-import { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
-import PairSelector from './PairSelector';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
