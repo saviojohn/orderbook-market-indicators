@@ -1,7 +1,7 @@
 // lib/useBinanceDepth.ts
-import { useEffect, useRef, useState } from 'react';
-import { useTradingPair } from '@/app/context/TradingPairContext';
-import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { useEffect, useRef, useState } from "react";
+import { useTradingPair } from "@/app/context/TradingPairContext";
+import { useSnackbar } from "@/app/context/SnackbarProvider";
 
 export const useBinanceDepth = () => {
   const { pair } = useTradingPair();
@@ -20,29 +20,62 @@ export const useBinanceDepth = () => {
       wsRef.current.close();
     }
 
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@depth10@100ms`);
+    const ws = new WebSocket(
+      `wss://stream.binance.com:9443/ws/${pair}@depth10@100ms`
+    );
     wsRef.current = ws;
 
     ws.onopen = () => {
-      showSnackbar(`Connected to ${pair.toUpperCase()} orderbook`, 'success');
+      showSnackbar({
+        message: `Connected to ${pair.toUpperCase()} orderbook`,
+        severity: "success",
+      });
       setLoading(false);
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setBids(data.bids);
-      setAsks(data.asks);
+      try {
+        const data = JSON.parse(event.data);
+        if (data?.bids && data?.asks) {
+          setBids(data.bids);
+          setAsks(data.asks);
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("WebSocket message parse error:", err);
+        }
+      }
     };
 
-    ws.onerror = () => {
-      setError('WebSocket error: Could not fetch data');
+    ws.onerror = (err) => {
+      if (process.env.NODE_ENV === "development") {
+        console.error("WebSocket error:", err);
+      }
+
+      setError("Live order book data is temporarily unavailable.");
       setLoading(false);
-      showSnackbar('WebSocket error: failed to connect', 'error');
+      showSnackbar({
+        message: "⚠️ Real-time data unavailable. Reconnecting...",
+        severity: "warning",
+      });
     };
 
-    ws.onclose = () => {
-      showSnackbar('WebSocket connection closed', 'info');
+    ws.onclose = (event) => {
+      if (event.wasClean) {
+        showSnackbar({
+          message: 'WebSocket connection closed cleanly',
+          severity: 'info',
+        });
+      } else {
+        showSnackbar({
+          message: 'WebSocket disconnected unexpectedly. Retry?',
+          severity: 'error',
+          actionLabel: 'Retry',
+          onAction: () => window.location.reload(),
+        });
+      }
     };
+    
 
     return () => {
       ws.close();
