@@ -1,4 +1,3 @@
-// app/components/OrderbookTable.tsx
 'use client';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box } from '@mui/material';

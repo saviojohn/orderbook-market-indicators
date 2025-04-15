@@ -26,17 +26,14 @@ export default function SpreadChart() {
   useEffect(() => {
     if (!bids.length || !asks.length) return;
   
-    // calculate spread and time
     const bestBid = parseFloat(bids[0][0]);
     const bestAsk = parseFloat(asks[0][0]);
     const spread = parseFloat((bestAsk - bestBid).toFixed(2));
     const now = new Date();
     const timestamp = now.toLocaleTimeString();
   
-    // record that updates have started
     setHasStarted(true);
   
-    // update data state in real-time
     setData((prev) => {
       const updated = [...prev, { time: timestamp, spread }];
       return updated.length > 60 ? updated.slice(-60) : updated;

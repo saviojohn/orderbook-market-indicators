@@ -30,15 +30,15 @@ export default function DepthChart() {
 
     const bidPoints = bids
       .map(([price, qty]) => [parseFloat(price), parseFloat(qty)])
-      .sort((a, b) => b[0] - a[0]); // high to low
+      .sort((a, b) => b[0] - a[0]);
 
     const askPoints = asks
       .map(([price, qty]) => [parseFloat(price), parseFloat(qty)])
-      .sort((a, b) => a[0] - b[0]); // low to high
+      .sort((a, b) => a[0] - b[0]); 
 
     for (const [price, qty] of bidPoints) {
       cumBid += qty;
-      data.unshift({ price, bidVolume: cumBid }); // insert from bottom
+      data.unshift({ price, bidVolume: cumBid }); 
     }
 
     for (const [price, qty] of askPoints) {

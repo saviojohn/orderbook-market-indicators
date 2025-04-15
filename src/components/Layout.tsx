@@ -1,4 +1,3 @@
-// app/components/Layout.tsx
 'use client';
 
 import { AppBar, Box, Container, CssBaseline, Toolbar, Typography } from '@mui/material';

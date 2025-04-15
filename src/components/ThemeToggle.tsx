@@ -1,4 +1,3 @@
-// app/components/ThemeToggle.tsx
 'use client';
 
 import { IconButton } from '@mui/material';

@@ -1,4 +1,3 @@
-// lib/useBinanceDepth.ts
 import { useEffect, useRef, useState } from "react";
 import { useTradingPair } from "@/app/context/TradingPairContext";
 import { useSnackbar } from "@/app/context/SnackbarProvider";
@@ -81,6 +80,6 @@ export const useBinanceDepth = () => {
       ws.close();
     };
   }, [pair, showSnackbar]);
-  
+
   return { bids, asks, loading, error };
 };
