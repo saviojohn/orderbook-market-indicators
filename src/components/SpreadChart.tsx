@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer, 
 } from "recharts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useBinanceDepth } from '@/lib/useBinanceDepth';
 
 type SpreadPoint = {

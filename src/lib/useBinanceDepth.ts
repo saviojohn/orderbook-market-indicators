@@ -80,7 +80,7 @@ export const useBinanceDepth = () => {
     return () => {
       ws.close();
     };
-  }, [pair]);
-
+  }, [pair, showSnackbar]);
+  
   return { bids, asks, loading, error };
 };

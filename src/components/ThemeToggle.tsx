@@ -1,7 +1,7 @@
 // app/components/ThemeToggle.tsx
 'use client';
 
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { LightMode, DarkMode } from '@mui/icons-material';
 import { useThemeMode } from '@/app/context/ThemeContext';
 
