@@ -19,7 +19,7 @@ type SpreadPoint = {
 };
 
 export default function SpreadChart() {
-  const { bids, asks, loading, error } = useBinanceDepth();
+  const { bids, asks, error } = useBinanceDepth();
   const [data, setData] = useState<SpreadPoint[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
 
