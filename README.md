@@ -18,9 +18,22 @@ This project is a real-time, responsive cryptocurrency dashboard built using **N
 
 ## 🔍 Assumptions
 
-- The app focuses on **BTC-USD**, but includes a dropdown (`PairSelector`) to support other pairs supported by Binance.
+- The app focuses on **BTC-USD**, but includes a tab (`PairSelector`) to support other pairs supported by Binance.
 - The user has access to the internet and WebSocket connections are not blocked.
 - Binance’s WebSocket provides free public access with rate limits suitable for demo use.
 
 ---
+
+## 🚀 Getting Started Locally
+- 1. Clone the repository
+git clone https://github.com/saviojohn/orderbook-market-indicators.git
+
+- 2. Install dependencies
+npm install
+
+- 3. Start the development server
+npm run dev
+
+The app will be live at: http://localhost:3000
+
 
